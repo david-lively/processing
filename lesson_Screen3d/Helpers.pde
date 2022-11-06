@@ -167,14 +167,15 @@ class Ship extends Entity
 
 void drawGrid(int cellSize)
 {
+  float z = -1;
   strokeWeight(1);
   for (float i=0; i <= height; i += cellSize)
   {
-    line(0, i, width, i);
+    line(0, i, z, width, i, z);
   }
   for (float i=0; i < width; i += cellSize)
   {
-    line(i, 0, i, height);
+    line(i, 0, z, i, height, z);
   }
 }
 
@@ -190,9 +191,14 @@ void labelLine(float x0, float y0, float x1, float y1, String label)
 
 
 float round(float val, int places)
-{
+{  
   int scalar = (int)pow(10, 2);
   float t = val * scalar;
   t = round(t) * 1.0 / scalar;
   return t;
+}
+
+float clamp(float v, float mn, float mx)
+{
+  return max(min(v,mx),mn);
 }
