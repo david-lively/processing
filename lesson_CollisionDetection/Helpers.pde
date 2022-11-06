@@ -12,6 +12,34 @@ class Clock
   }
 }
 
+class Vector2
+{
+  float x;
+  float y;
+  
+  Vector2() {}
+  Vector2(float v)
+  {
+    x = v;
+    y = v;
+  }
+  Vector2(float vx, float vy)
+  {
+    x = vx;
+    y = vy;
+  }
+  
+  float magnitudeSquared()
+  {
+    return x*x + y*y;
+  }
+  
+  float magnitude()
+  {
+    return sqrt(x*x + y*y);
+  }
+}
+
 class Entity
 {
   String name;
@@ -19,9 +47,9 @@ class Entity
   float y;
   float size;
   color c;
-
+  
   float heading;
-  float velocity;
+  Vector2 velocity = new Vector2();
 
   Entity() {
     c = color(255);
@@ -69,18 +97,23 @@ class Entity
 
   void update()
   {
-    var moveDistance = clock.dt * velocity;
-
-    var dx = moveDistance * cos(radians(heading));
-    var dy = moveDistance * sin(radians(heading));
-    x += dx;
-    y += dy;
+    //var dx = moveDistance * cos(radians(heading));
+    //var dy = moveDistance * sin(radians(heading));
+    x += clock.dt * velocity.x;
+    y += clock.dt * velocity.y;
+  }
+  
+  void accelerate(float dv)
+  {
+    velocity.x += dv * cos(radians(heading));
+    velocity.y += dv * sin(radians(heading));
   }
 
   void printAt(float tx, float ty)
-  {
+  {    
     text("X = " + round(x, 2), tx, ty);
     text("Y = " + round(y, 2), tx, ty + 24);
+    text("V = " + round(velocity.x,2) + "," + round(velocity.y,2), tx, ty + 24*2);
   }
   
   void print()

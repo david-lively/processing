@@ -16,7 +16,7 @@ void setup()
   ship = new Ship(-400, -400, 10, red);
   ship.name = "Ship";
   ship.heading = 45;
-  ship.velocity = 100;
+  ship.velocity = new Vector2(50 * sqrt(2), 50 * sqrt(2));
   ship.size = 40;
   allEntities.add(ship);
 
@@ -86,10 +86,11 @@ void handleInput()
     switch(keyCode)
     {
     case UP :
-      ship.velocity += 2;
+      println("Accelerate!");
+      ship.accelerate(2);
       break;
     case DOWN:
-      ship.velocity -= 2;
+      ship.accelerate(-2);
       break;
     case LEFT :
       ship.heading -= 5;
@@ -101,7 +102,8 @@ void handleInput()
     switch(key)
     {
     case ' ':
-      ship.velocity = 0;
+      ship.velocity.x = 0;
+      ship.velocity.y = 0;
       break;
     }
   }
@@ -112,7 +114,7 @@ void render()
   push();
 
   background(0);
-  stroke(64);
+  stroke(32);
   drawGrid(10);
 
   translate(width/2, height / 2);
@@ -135,6 +137,14 @@ void render()
     entity.draw();
   }
 
+  drawHelpers();
+
+}
+
+void drawHelpers()
+{
+  var e0 = ship;
+  var e1 = asteroid;
   stroke(128);
   drawCollisionTriangle(e0, e1);
   pop();
@@ -153,12 +163,11 @@ void render()
   var circleDistance = d - (ship.size + asteroid.size);
   if (circleDistance <= 0)
     fill(255,0,0);
-  s = "CenterDistance - ship radius " + ship.size + " - asteroid radius " + asteroid.size + " = " + circleDistance;
+  s = "CenterDistance - ship radius " + ship.size + " - asteroid radius " + asteroid.size + " = " + round(circleDistance,2);
   fill(cyan);
   text("Circle Distance = "+s, 0, textY += fontSize);
-  pop();
+  pop();  
 }
-
 
 
 void drawCollisionTriangle(Entity e0, Entity e1)
@@ -183,7 +192,7 @@ void drawCollisionTriangle(float x0, float y0, float x1, float y1)
   
 //  labelLine(x0, y0, x1, y1, " Distance = " + d);
   var centerDistance = d - ship.size - asteroid.size;
-  labelLine(x0,y0,x1,y1, "Distance = " + centerDistance);
+  labelLine(x0,y0,x1,y1, "Distance = " + round(centerDistance,2));
 
   /// square "right angle" indicator
   var squareSize = 15;
@@ -215,7 +224,7 @@ void drawHelpText()
   textSize(fontSize);
   stroke(255);
   fill(255);
-  var s = "Controls:\nLeft & right arrows : turn\nForward: Accelerate\nSpace: stop.";
+  var s = "Controls:\nLeft & right arrows : turn\nUp: Accelerate\nSpace: stop.";
   
   translate(0,height - 10 - fontSize * 5);
   text(s,0,0);
