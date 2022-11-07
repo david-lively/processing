@@ -10,7 +10,7 @@ class GamePage extends Page
 
     color red = color(255, 0, 0);
     color green = color(0, 255, 0);
-
+  
     ship = new Ship(-400, -400, 10, red);
     ship.name = "Ship";
     ship.heading = 45;
@@ -20,7 +20,7 @@ class GamePage extends Page
 
     asteroid = new Entity(0, 0, 100, green);
     asteroid.heading = 135;
-    asteroid.velocity = new Vector2(10,10);
+    asteroid.velocity = new Vector2(40,20);
     entities.add(asteroid);
     asteroid.name = "Asteroid";
   }
