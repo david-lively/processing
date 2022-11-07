@@ -18,9 +18,9 @@ class GamePage extends Page
     ship.size = 40;
     entities.add(ship);
 
-    asteroid = new Entity(0, 0, 100, green);
+    asteroid = new Entity(200, 50, 100, green);
     asteroid.heading = 135;
-    asteroid.velocity = new Vector2(40,20);
+    //asteroid.velocity = new Vector2(40,20);
     entities.add(asteroid);
     asteroid.name = "Asteroid";
   }
