@@ -177,7 +177,13 @@ class Ship extends Entity
     boundingRadius = r;
     boundsCenter.x = cx;
     boundsCenter.y = cy;
-    println("boundingRadius = ", boundingRadius);
+    println("bounds: center ",cx," ",cy," radius ",boundingRadius);
+    
+    for(var i=0; i < lines.length; ++i)
+    {
+      lines[i] /= r;
+    }
+    boundingRadius = 1;
   }
 
   void draw()
@@ -204,8 +210,8 @@ class Ship extends Entity
     //line(0, 1, 0.5, -1);
     //line(0, 1, -0.5, -1);
     stroke(255, 0, 0);
-    ellipseMode(RADIUS);
-    circle(boundsCenter.x,boundsCenter.y, boundingRadius);
+    //ellipseMode(RADIUS);
+    //circle(boundsCenter.x,boundsCenter.y, boundingRadius);
 
     pop();
   }
