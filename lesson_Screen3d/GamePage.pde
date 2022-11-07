@@ -15,10 +15,12 @@ class GamePage extends Page
     ship.name = "Ship";
     ship.heading = 45;
     //ship.velocity = new Vector2(50 * sqrt(2), 50 * sqrt(2));
-    ship.size = 20;
+    ship.size = 40;
     entities.add(ship);
 
     asteroid = new Entity(0, 0, 100, green);
+    asteroid.heading = 135;
+    asteroid.velocity = new Vector2(10,10);
     entities.add(asteroid);
     asteroid.name = "Asteroid";
   }
@@ -27,16 +29,29 @@ class GamePage extends Page
   {
     super.update();
     handleInput();
+    
+    for(var e : entities)
+    {
+      if (e.x > width/2)
+        e.x -= width;
+      else if (e.x < -width/2)
+        e.x += width;
+        
+      if (e.y > height/2)
+        e.y -= height;
+      else if (e.y < -height/2)
+        e.y += height;
+    }
 
-    // wrap ship to viewport bounds
-    if (ship.x > width/2)
-      ship.x -= width;
-    else if (ship.x < -width/2)
-      ship.x += width;
-    if (ship.y > height/ 2)
-      ship.y -= height;
-    else if (ship.y < -height/2)
-      ship.y += height;
+//    // wrap ship to viewport bounds
+//    if (ship.x > width/2)
+//      ship.x -= width;
+//    else if (ship.x < -width/2)
+//      ship.x += width;
+//    if (ship.y > height/ 2)
+//      ship.y -= height;
+//    else if (ship.y < -height/2)
+//      ship.y += height;
   }
 
   void handleInput()

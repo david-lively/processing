@@ -18,6 +18,7 @@ void setup()
 
 void draw()
 {
+  background(0);
   clock.update();
   for (Page page : allPages)
     page.update();

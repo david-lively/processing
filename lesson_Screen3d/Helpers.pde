@@ -139,11 +139,13 @@ class Entity
 
 class Ship extends Entity
 {
+  float[] lines;
+  
   Ship(float centerX, float centerY, float radius, color c)
   {
     super(centerX, centerY, radius, c);
+    lines = new float[] {0,1,0.5,-1,0,1,-0.5,-1};
   }
-
 
   void draw()
   {
@@ -158,8 +160,16 @@ class Ship extends Entity
     rotate(radians(heading - 90));
     scale(size);
     strokeWeight(2.0/size);
-    line(0, 1, 0.5, -1);
-    line(0, 1, -0.5, -1);
+    for(var i=0; i < lines.length-3; i += 4)
+    {
+      var x0 = lines[i];
+      var y0 = lines[i+1];
+      var x1 = lines[i+2];
+      var y1 = lines[i+3];
+      line(x0,y0,x1,y1);
+    }
+    //line(0, 1, 0.5, -1);
+    //line(0, 1, -0.5, -1);
 
     pop();
   }
