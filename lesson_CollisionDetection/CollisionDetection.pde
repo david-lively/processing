@@ -2,10 +2,11 @@
 //Entity second = new Entity();
 Clock clock = new Clock();
 Entity ship;
-Entity asteroid;
+//Entity asteroid;
 color cyan = color(0,255,255);
 
 ArrayList<Entity> allEntities = new ArrayList<Entity>();
+ArrayList<Entity> asteroids = new ArrayList<Entity>();
 
 void setup()
 {
@@ -15,82 +16,97 @@ void setup()
 
   ship = new Ship(-400, -400, 10, red);
   ship.name = "Ship";
-  ship.heading = 45;
-  ship.velocity = new Vector2(50 * sqrt(2), 50 * sqrt(2));
+  ship.drag = 0.2;
+  ship.heading = 0;
+  //ship.velocity = new Vector2(50 * sqrt(2), 50 * sqrt(2));
   ship.size = 40;
+  
   allEntities.add(ship);
+  
+  
+  float xRange = 1000;
+  float yRange = 500;
+  
+  for(int i=0; i < 10; i++)
+  {
+    float x = random(xRange) - xRange / 2;
+    float y = random(yRange) - yRange / 2;    
 
-  asteroid = new Entity(0, 0, 100, green);
-  allEntities.add(asteroid);
-  asteroid.name = "Asteroid";
+    var asteroid = new Entity(x,y,50,red);
+    float speed = 20 + random(5);
+    
+    asteroid.heading = random(360);
+    asteroid.velocity.x = speed * cos(radians(asteroid.heading));    
+    asteroid.velocity.y = speed * sin(radians(asteroid.heading));
+    
+    asteroid.name = "Asteroid " + i;
+    
+    allEntities.add(asteroid);
+    asteroids.add(asteroid);
+    //asteroids.add(asteroid);    
+  }
+
+  
+
+  //asteroid = new Entity(0, 0, 100, green);
+  //allEntities.add(asteroid);
+  //asteroid.name = "Asteroid";
 }
 
-Boolean collided(Entity foo, Entity bar)
-{
-  var dx = foo.x - bar.x;
-  var dy = foo.y - bar.y;
-
-  var distance = sqrt(dx*dx + dy*dy);
-
-  var sumRadii = foo.size + bar.size;
-
-  return sumRadii <= distance;
-}
 
 void draw()
 {
   clock.update();
   update();
   render();
-  drawHelpText();
+  //drawHelpText();
 }
 
 void update()
 {
-  /*
-  var orbitalVelocity = 30/60.0;
-   // orbit the ship around the asteroid.
-   var dx = ship.x - asteroid.x;
-   var dy = ship.y - asteroid.y;
-   
-   var theta = radians(orbitalVelocity);
-   
-   var dx1 = dx * cos(theta) - dy * sin(theta);
-   var dy1 = dx * sin(theta) + dy * cos(theta);
-   
-   ship.x = dx1;
-   ship.y = dy1;
-   */
-
   handleInput();
 
   for (Entity entity : allEntities)
   {
     entity.update();
+    wrapPositionToScreen(entity);
   }
-
-  if (ship.x > width/2)
-    ship.x -= width;
-  else if (ship.x < -width/2)
-    ship.x += width;
-  if (ship.y > height/ 2)
-    ship.y -= height;
-  else if (ship.y < -height/2)
-    ship.y += height;
+  
+  doCollisionStuff();
 }
+
+void doCollisionStuff()
+{
+  color red = color(255,0,0);
+  color green = color(0,255,0);
+  
+  for(var asteroid : asteroids)
+  {
+    
+    //println("Checking asteroid '" + asteroid.name + "'");
+    if (ship.collidesWith(asteroid))
+    {
+      asteroid.c = red;      
+    }
+    else
+      asteroid.c = green;
+  }
+}
+
+
 
 void handleInput()
 {
+  var accelerationFactor = 4;
   if (keyPressed)
   {
     switch(keyCode)
     {
     case UP :
-      println("Accelerate!");
-      ship.accelerate(2);
+      ship.accelerate(accelerationFactor);
       break;
     case DOWN:
-      ship.accelerate(-2);
+      ship.accelerate(-accelerationFactor);
       break;
     case LEFT :
       ship.heading -= 5;
@@ -119,28 +135,59 @@ void render()
 
   translate(width/2, height / 2);
 
-  var e0 = allEntities.get(0);
-  var e1 = allEntities.get(1);
-
-  color c;
-  if (e0.collidesWith(e1))
+  var ship = allEntities.get(0);
+  var circle = allEntities.get(1);
+  
+  for (Entity entity : allEntities)
   {
+    //entity.c = color(0,255,0);
+    entity.draw();
+  }
+
+  
+
+  //for(var asteroid : asteroids)
+  //{
+  //  if (ship.collidesWith(asteroid))
+  //  {
+  //  }
+  //}
+/*  
+  if (ship.collidesWith(circle))
+  {
+    var vx = ship.velocity.x;
+    var vy = ship.velocity.y;
+    
+    ship.velocity.x = -0.5 * vx;
+    ship.velocity.y = -0.5 * vy;
+
+    circle.drag = -0.2;
+    circle.velocity.x = vx * 0.5;
+    circle.velocity.y = vy * 0.5;
+    
+    
+    //var tx = ship.x - circle.x;
+    //var ty = ship.y -circle.y;
+    
+    //var tx1 = -1 * ty;
+    //var ty1 = tx;
+    //var len = sqrt(tx1*tx1 + ty1 * ty1);
+    
+    //ship.velocity.x *= tx1 / len;
+    //ship.velocity.y *= ty1 / len;
+
     c = color(255, 0, 0);
   } else
   {
     c = color(0, 255, 0);
   }
-
-  for (Entity entity : allEntities)
-  {
-    entity.c = c;
-    entity.draw();
-  }
-
-  drawHelpers();
+*/
+  //drawHelpers();
+  
+  pop();
 
 }
-
+/*
 void drawHelpers()
 {
   var e0 = ship;
@@ -230,3 +277,4 @@ void drawHelpText()
   text(s,0,0);
   pop();
 }
+*/
