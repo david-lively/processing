@@ -102,7 +102,7 @@ class Moveable extends Entity
       position.x += width;
     } else if (position.x >= width/2)
     {
-      position.x += width;
+      position.x -= width;
     }
     if (position.y < -height/2)
     {
@@ -135,6 +135,7 @@ class Drawable extends Moveable
 
   Drawable() {
     super();
+    //vertices = new float[0];
     this.c = color(255);
   }
 
@@ -152,9 +153,7 @@ class Drawable extends Moveable
     this.radius = radius;
   }
 
-  void render()
-  {
-    //println("Rendering `" + name + "`");
+  void prerender() {
     push();
     translate(position.x, position.y);
     rotate(radians(orientation));
@@ -162,27 +161,39 @@ class Drawable extends Moveable
 
     stroke(c);
     strokeWeight(2.0/radius);
+  }
 
-    for (var i=0; i < vertices.length; i += 4)
-    {
-      line(vertices[i],
-        vertices[i+1],
-        vertices[i+2],
-        vertices[i+3]);
-    }
+  void render()
+  {
+    prerender();
+
+    if (null != vertices)
+      for (var i=0; i < vertices.length; i += 4)
+      {
+        line(vertices[i],
+          vertices[i+1],
+          vertices[i+2],
+          vertices[i+3]);
+      }
     for (var entity : children)
     {
       entity.render();
     }
 
+    postrender();
+  }
+
+  void postrender()
+  {
     pop();
-    //circle(0, 0, 400);
   }
 }
 
 class Ship extends Drawable
 {
   Drawable thruster;
+  Axes axes;
+
   Ship(float x, float y, float radius)
   {
     super(x, y, 0, radius);
@@ -206,13 +217,26 @@ class Ship extends Drawable
     thruster = new Thruster();
     thruster.parent = this;
     children.add(thruster);
+
     thruster.initialize();
+    axes = new Axes();
+    children.add(axes);
   }
 
   void accelerate(float dv)
   {
     super.accelerate(dv);
     thruster.accelerate(dv);
+  }
+  
+  void reset()
+  {
+    super.reset();
+    position.x = 0;
+    position.y = 0;
+    velocity.x = 0;
+    velocity.y = 0;
+    orientation = 0;
   }
 }
 
@@ -223,7 +247,6 @@ class Thruster extends Drawable
   void initialize()
   {
     name = "Thruster";
-    println("Initializing `" + name + "`");
     vertices = new float[] {
       -1, +1, +1, +1,
       +1, +1, +1, -1,
@@ -251,7 +274,7 @@ class Thruster extends Drawable
   {
     lifetime = 1;
   }
-  
+
   void update()
   {
     if (lifetime > 0)
@@ -268,6 +291,7 @@ class Grid extends Drawable
   Grid()
   {
     super(0, 0, width/2);
+    vertices = new float[0];
   }
 
   void render()
@@ -278,7 +302,7 @@ class Grid extends Drawable
     translate(position.x, position.y);
     rotate(orientation);
 
-    stroke(64);
+    stroke(32);
 
     for (var i=-radius; i <= radius; i += 32)
     {
@@ -287,5 +311,18 @@ class Grid extends Drawable
     }
 
     pop();
+  }
+}
+
+class Axes extends Drawable
+{
+  void initialize()
+  {
+    super.initialize();
+  }
+  void render()
+  {
+    super.render();
+    drawAxes(10);
   }
 }

@@ -1,6 +1,7 @@
 ArrayList<Entity> allEntities;
 Ship ship;
 Clock clock;
+Grid grid;
 
 void setup()
 {
@@ -11,27 +12,14 @@ void setup()
   clock = new Clock();
   allEntities.add(clock);
 
+  grid = new Grid();
+  //allEntities.add(grid);
+
   ship = new Ship();
   ship.radius = 30;
-  //ship.orientation = -90;
   allEntities.add(ship);
 }
 
-void drawAxes()
-{
-  var size = 600.0;
-  var halfSize = size / 2.0;
-  color xAxisColor = color(128, 0, 0);
-  color yAxisColor = color(0, 128, 0);
-
-  //translate(width/2,height/2);
-
-  stroke(xAxisColor);
-  line(-halfSize, 0, halfSize, 0);
-
-  stroke(yAxisColor);
-  line(0, -halfSize, 0, halfSize);
-}
 
 void draw()
 {
@@ -39,9 +27,9 @@ void draw()
   background(0);
   push();
   translate(width/2, height/2);
+  grid.render();
 
   // move the origin to the center of the screen
-  drawAxes();
 
   for (var entity : allEntities)
   {
@@ -53,6 +41,7 @@ void draw()
     entity.render();
   }
   
+  drawAxes(600);
 
 
   pop();
