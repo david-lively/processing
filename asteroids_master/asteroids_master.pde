@@ -1,4 +1,5 @@
 ArrayList<Entity> allEntities;
+ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
 Ship ship;
 Clock clock;
 Grid grid;
@@ -18,6 +19,22 @@ void setup()
   ship = new Ship();
   ship.radius = 30;
   allEntities.add(ship);
+  
+  createAsteroids();
+  
+  for(var entity : allEntities)
+  {
+    entity.initialize();
+  }
+}
+
+void createAsteroids()
+{
+  var a = new Asteroid();
+  a.radius = 60;
+  a.position = new PVector(0,0);
+  asteroids.add(a);
+  allEntities.add(a);
 }
 
 

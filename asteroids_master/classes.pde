@@ -8,7 +8,7 @@ class Entity
   Entity()
   {
     name = "Entity " + entityCount++;
-    initialize();
+    //initialize();
   }
 
   void update() {
@@ -219,8 +219,8 @@ class Ship extends Drawable
     children.add(thruster);
 
     thruster.initialize();
-    axes = new Axes();
-    children.add(axes);
+    //axes = new Axes();
+    //children.add(axes);
   }
 
   void accelerate(float dv)
@@ -228,7 +228,15 @@ class Ship extends Drawable
     super.accelerate(dv);
     thruster.accelerate(dv);
   }
-  
+
+  void prerender()
+  {
+    super.prerender();
+    push();
+    drawAxes(10);
+    pop();
+  }
+
   void reset()
   {
     super.reset();
@@ -324,5 +332,65 @@ class Axes extends Drawable
   {
     super.render();
     drawAxes(10);
+  }
+}
+
+class Asteroid extends Drawable
+{
+  void initialize()
+  {
+    super.initialize();
+
+    var numVerts = 12;
+    var r = 1;
+
+    var points = new float[numVerts * 2 + 2];
+
+    {
+      for (var i=0; i < numVerts; ++i)
+      {
+        var theta = i * 2.0 *PI / numVerts;
+
+        var noiseR = r + (random(20)-10)/40.0;
+        var x = cos(theta) * noiseR;
+        var y = sin(theta) * noiseR;
+        
+        
+        
+        
+        points[2*i] = x;
+        points[2*i + 1] = y;
+      }
+      points[2*numVerts] = points[0];
+      points[2*numVerts+1] = points[1];
+
+
+    }
+
+    var vi = 0;
+    vertices = new float[points.length * 2];
+    // convert to line segments
+    for (var i=0; i < points.length-1; i += 2)
+    {
+      var x0 = points[i];
+      var y0 = points[i+1];
+      var x1 = points[(i+2) % points.length];
+      var y1 = points[(i+3) % points.length];
+
+      vertices[vi++] = x0;
+      vertices[vi++] = y0;
+      vertices[vi++] = x1;
+      vertices[vi++] = y1;
+    }
+
+    println(vi + " length = " + vertices.length);
+  }
+  
+  void prerender()
+  {
+    super.prerender();
+    push();
+    drawAxes(10);
+    pop();
   }
 }
