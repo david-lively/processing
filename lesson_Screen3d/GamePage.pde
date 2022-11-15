@@ -20,6 +20,7 @@ class GamePage extends Page
 
     asteroid = new Entity(200, 50, 100, green);
     asteroid.heading = 135;
+    asteroid.accelerate(30);
     //asteroid.velocity = new Vector2(40,20);
     entities.add(asteroid);
     asteroid.name = "Asteroid";
@@ -42,16 +43,7 @@ class GamePage extends Page
       else if (e.y < -height/2)
         e.y += height;
     }
-
-//    // wrap ship to viewport bounds
-//    if (ship.x > width/2)
-//      ship.x -= width;
-//    else if (ship.x < -width/2)
-//      ship.x += width;
-//    if (ship.y > height/ 2)
-//      ship.y -= height;
-//    else if (ship.y < -height/2)
-//      ship.y += height;
+    
   }
 
   void handleInput()
@@ -80,11 +72,11 @@ class GamePage extends Page
   {
     //super.drawPage();
     
-    push();
-
-    background(0);
-    stroke(32);
-    drawGrid(32);
+      push();
+  
+      background(0);
+      stroke(32);
+      drawGrid(32);
 
     translate(width/2, height / 2);
 
@@ -106,11 +98,11 @@ class GamePage extends Page
       entity.draw();
     }
 
-    stroke(128);
-    drawCollisionTriangle(e0, e1);
+    //stroke(128);
+    //drawCollisionTriangle(e0, e1);
     pop();
     
-    drawHelpers();
+    //drawHelpers();
   }
 
   void keyPressed()

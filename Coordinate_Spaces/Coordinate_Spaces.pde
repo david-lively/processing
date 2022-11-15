@@ -9,7 +9,6 @@ void setup()
 {
   size(1280, 720, P3D);
   allPages.add(new GamePage());
-  //allPages.add(new HomeScreen());
 
   for (Page page : allPages)
   {
@@ -21,9 +20,9 @@ void draw()
 {
   background(0);
   clock.update();
-  for (Page page : allPages)
+  for (var page : allPages)
     page.update();
-  for (Page page : allPages)
+  for (var page : allPages)
     page.render();
 }
 

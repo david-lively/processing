@@ -18,6 +18,7 @@ void labelLine(float x0, float y0, float x1, float y1, String label)
   line(x0, y0, x1, y1);
   var tx = (x0 + x1) / 2.0;
   var ty = (y0 + y1) / 2.0;
+  textAlign(CENTER);
   text(label, tx, ty - 32);
   line(tx,ty,tx,ty-32);
 }

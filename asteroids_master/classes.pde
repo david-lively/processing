@@ -1,6 +1,7 @@
 int entityCount = 0;
 class Entity
 {
+  Boolean enabled = true;
   Entity parent;
   ArrayList<Entity> children = new ArrayList<Entity>();
   String name;
@@ -12,18 +13,28 @@ class Entity
   }
 
   void update() {
+    if (!enabled)
+      return;
+    handleInput();
     for (var child : children)
     {
       child.update();
     }
   }
   void render() {
+    if (!enabled)
+      return;
     for (var child : children)
     {
       child.render();
     }
   }
+
+  void initializeSelf() {
+  }
+
   void initialize() {
+    initializeSelf();
     for (var child : children)
     {
       child.initialize();
@@ -35,6 +46,9 @@ class Entity
     {
       child.reset();
     }
+  }
+
+  void handleInput() {
   }
 }
 
@@ -154,7 +168,6 @@ class Drawable extends Moveable
   }
 
   void prerender() {
-    push();
     translate(position.x, position.y);
     rotate(radians(orientation));
     scale(radius);
@@ -165,6 +178,7 @@ class Drawable extends Moveable
 
   void render()
   {
+    push();
     prerender();
 
     if (null != vertices)
@@ -175,17 +189,17 @@ class Drawable extends Moveable
           vertices[i+2],
           vertices[i+3]);
       }
-    for (var entity : children)
+    for (var child : children)
     {
-      entity.render();
+      child.render();
     }
 
     postrender();
+    pop();
   }
 
   void postrender()
   {
-    pop();
   }
 }
 
@@ -341,7 +355,7 @@ class Asteroid extends Drawable
   {
     super.initialize();
 
-    var numVerts = 12;
+    var numVerts = 32;
     var r = 1;
 
     var points = new float[numVerts * 2 + 2];
@@ -351,20 +365,18 @@ class Asteroid extends Drawable
       {
         var theta = i * 2.0 *PI / numVerts;
 
-        var noiseR = r + (random(20)-10)/40.0;
+        var noiseR = r + (random(20)-10)/60.0;
         var x = cos(theta) * noiseR;
         var y = sin(theta) * noiseR;
-        
-        
-        
-        
+
+
+
+
         points[2*i] = x;
         points[2*i + 1] = y;
       }
       points[2*numVerts] = points[0];
       points[2*numVerts+1] = points[1];
-
-
     }
 
     var vi = 0;
@@ -385,7 +397,7 @@ class Asteroid extends Drawable
 
     println(vi + " length = " + vertices.length);
   }
-  
+
   void prerender()
   {
     super.prerender();

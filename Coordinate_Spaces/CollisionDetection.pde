@@ -1,3 +1,4 @@
+/*
 //Entity first = new Entity();
 //Entity second = new Entity();
 Clock clock = new Clock();
@@ -34,3 +35,4 @@ void keyPressed()
     p.keyPressed();
   }
 }
+*/

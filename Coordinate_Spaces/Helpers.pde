@@ -43,6 +43,8 @@ class Vector2
 
 class Entity
 {
+  Entity parent;
+  
   String name;
   float x;
   float y;
@@ -75,8 +77,6 @@ class Entity
   {
     var d = distanceFrom(other);
     var sumOfRadii = other.size + this.size;
-
-
     return d <= sumOfRadii;
   }
 
@@ -92,6 +92,11 @@ class Entity
     push();
     stroke(c);
     noFill();
+    if (null != parent)
+    {
+       translate(parent.x,parent.y);
+       rotate(parent.heading);
+    }
     translate(x, y);
     ellipseMode(RADIUS);
     circle(0, 0, size);
