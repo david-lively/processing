@@ -273,7 +273,7 @@ class Thruster extends Drawable
       translate(position.x, position.y);
       rotate(orientation);
       noFill();
-      triangle(0.5, 0.3, 0.5, -0.3, -1, 0);
+      triangle(0.5, 0.3, 0.5, -0.3, -0.5, 0);
       pop();
     }
   }
@@ -341,7 +341,7 @@ class Asteroid extends Drawable
   {
     super.initialize();
 
-    var numVerts = 12;
+    var numVerts = 20;
     var r = 1;
 
     var points = new float[numVerts * 2 + 2];
@@ -351,12 +351,10 @@ class Asteroid extends Drawable
       {
         var theta = i * 2.0 *PI / numVerts;
 
+        /// offset each vertex by a random amount
         var noiseR = r + (random(20)-10)/40.0;
         var x = cos(theta) * noiseR;
         var y = sin(theta) * noiseR;
-        
-        
-        
         
         points[2*i] = x;
         points[2*i + 1] = y;
@@ -383,7 +381,6 @@ class Asteroid extends Drawable
       vertices[vi++] = y1;
     }
 
-    println(vi + " length = " + vertices.length);
   }
   
   void prerender()
@@ -393,4 +390,43 @@ class Asteroid extends Drawable
     drawAxes(10);
     pop();
   }
+}
+
+class Missile extends Drawable
+{
+  void initialize()
+  {
+    super.initialize();
+    
+    vertices = new float[4];
+    
+    //radius = 100;
+    vertices[0] = -0.5;
+    vertices[1] = 0;
+    vertices[2] = 0.5;
+    vertices[3] = 0;
+
+    this.c = color(255);    
+  }
+/*
+  void prerender()
+  {
+    super.prerender();
+    println("Prerender " + name);
+    push();
+    drawAxes(10);
+    pop();
+  }
+  
+  void render()
+  {
+    super.render();
+    //println("Rendering " + name);
+    push();
+    translate(100,100);
+    stroke(255);
+    triangle(-0.5,0.25,0.5,0,-0.5,-0.25);
+    pop();
+  }
+  */
 }

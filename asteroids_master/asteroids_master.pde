@@ -19,24 +19,31 @@ void setup()
   ship = new Ship();
   ship.radius = 30;
   allEntities.add(ship);
-  
+
   createAsteroids();
+
+  var m = new Missile();
+  m.name = "Missile";
+  m.position.x = 100;
+  m.position.y = 100;
+  m.radius = 10;
+  allEntities.add(m);
   
-  for(var entity : allEntities)
+  for (var entity : allEntities)
   {
     entity.initialize();
   }
+
 }
 
 void createAsteroids()
 {
   var a = new Asteroid();
   a.radius = 60;
-  a.position = new PVector(0,0);
+  a.position = new PVector(0, 0);
   asteroids.add(a);
   allEntities.add(a);
 }
-
 
 void draw()
 {
@@ -57,7 +64,7 @@ void draw()
   {
     entity.render();
   }
-  
+
   drawAxes(600);
 
 
