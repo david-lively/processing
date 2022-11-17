@@ -8,7 +8,6 @@ class Entity
   Entity()
   {
     name = "Entity " + entityCount++;
-    //initialize();
   }
 
   void update() {
@@ -68,6 +67,9 @@ class Moveable extends Entity
   PVector position = new PVector();
   PVector velocity = new PVector();
   float orientation;
+  int livesRemaining=1;
+  Boolean wrapToScreen = true;
+  float spin;
 
   Moveable()
   {
@@ -81,6 +83,13 @@ class Moveable extends Entity
     this.orientation = orientation;
   }
 
+  Boolean IsOffScreen()
+  {
+    return abs(position.x) > width/2 || abs(position.y) > height/2;
+    //return position.x < 0 || position.x >= width
+    //  || position.y < 0 ||position.y >= height;
+  }
+
   void accelerate(float dv)
   {
     velocity.x += dv * cos(radians(orientation));
@@ -91,25 +100,27 @@ class Moveable extends Entity
   {
     super.update();
     var dt = clock.dtSecs();
-    var moveX = velocity.x * dt;
-    var moveY = velocity.y * dt;
+    var move = velocity.copy().mult(dt);
     //moveBy = moveBy * velocity * clock.dt;
-    position.x += moveX;
-    position.y += moveY;
+    position.add(move);
+    orientation += spin * dt;
 
-    if (position.x < -width/2)
+    if (wrapToScreen)
     {
-      position.x += width;
-    } else if (position.x >= width/2)
-    {
-      position.x -= width;
-    }
-    if (position.y < -height/2)
-    {
-      position.y += height;
-    } else if (position.y >= height/2)
-    {
-      position.y -= height;
+      if (position.x < -width/2)
+      {
+        position.x += width;
+      } else if (position.x >= width/2)
+      {
+        position.x -= width;
+      }
+      if (position.y < -height/2)
+      {
+        position.y += height;
+      } else if (position.y >= height/2)
+      {
+        position.y -= height;
+      }
     }
   }
 
@@ -166,6 +177,7 @@ class Drawable extends Moveable
   void render()
   {
     prerender();
+    drawAxes();
 
     if (null != vertices)
       for (var i=0; i < vertices.length; i += 4)
@@ -204,6 +216,7 @@ class Ship extends Drawable
     super();
     name = "Ship";
     radius = 10;
+    livesRemaining = 1;
   }
 
   void initialize()
@@ -227,14 +240,6 @@ class Ship extends Drawable
   {
     super.accelerate(dv);
     thruster.accelerate(dv);
-  }
-
-  void prerender()
-  {
-    super.prerender();
-    push();
-    drawAxes(10);
-    pop();
   }
 
   void reset()
@@ -328,19 +333,30 @@ class Axes extends Drawable
   {
     super.initialize();
   }
+
   void render()
   {
     super.render();
-    drawAxes(10);
+    drawAxes();
   }
 }
 
 class Asteroid extends Drawable
 {
+
+  void explode()
+  {
+    radius *= 0.5;
+    --livesRemaining;
+  }
+
+
+
   void initialize()
   {
     super.initialize();
-
+    spin=45;
+    livesRemaining = 3;
     var numVerts = 20;
     var r = 1;
 
@@ -353,16 +369,15 @@ class Asteroid extends Drawable
 
         /// offset each vertex by a random amount
         var noiseR = r + (random(20)-10)/40.0;
+        //var noiseR = 1;;
         var x = cos(theta) * noiseR;
         var y = sin(theta) * noiseR;
-        
+
         points[2*i] = x;
         points[2*i + 1] = y;
       }
       points[2*numVerts] = points[0];
       points[2*numVerts+1] = points[1];
-
-
     }
 
     var vi = 0;
@@ -380,15 +395,6 @@ class Asteroid extends Drawable
       vertices[vi++] = x1;
       vertices[vi++] = y1;
     }
-
-  }
-  
-  void prerender()
-  {
-    super.prerender();
-    push();
-    drawAxes(10);
-    pop();
   }
 }
 
@@ -397,36 +403,45 @@ class Missile extends Drawable
   void initialize()
   {
     super.initialize();
-    
+    wrapToScreen = false;
+    livesRemaining = 1;
+
     vertices = new float[4];
-    
+
     //radius = 100;
     vertices[0] = -0.5;
     vertices[1] = 0;
     vertices[2] = 0.5;
     vertices[3] = 0;
 
-    this.c = color(255);    
+    this.c = color(255);
   }
-/*
+
+  void update()
+  {
+    super.update();
+    if (IsOffScreen())
+      --livesRemaining;
+  }
+  /*
   void prerender()
-  {
-    super.prerender();
-    println("Prerender " + name);
-    push();
-    drawAxes(10);
-    pop();
-  }
-  
-  void render()
-  {
-    super.render();
-    //println("Rendering " + name);
-    push();
-    translate(100,100);
-    stroke(255);
-    triangle(-0.5,0.25,0.5,0,-0.5,-0.25);
-    pop();
-  }
-  */
+   {
+   super.prerender();
+   println("Prerender " + name);
+   push();
+   drawAxes(10);
+   pop();
+   }
+   
+   void render()
+   {
+   super.render();
+   //println("Rendering " + name);
+   push();
+   translate(100,100);
+   stroke(255);
+   triangle(-0.5,0.25,0.5,0,-0.5,-0.25);
+   pop();
+   }
+   */
 }
