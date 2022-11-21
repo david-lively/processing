@@ -69,6 +69,8 @@ class Moveable extends Entity
   float orientation;
   int livesRemaining=1;
   Boolean wrapToScreen = true;
+  float radius;
+  
   float spin;
 
   Moveable()
@@ -139,7 +141,6 @@ class Moveable extends Entity
 
 class Drawable extends Moveable
 {
-  float radius;
   color c = 255;
 
   float[] vertices;// = new float[0];
@@ -174,11 +175,8 @@ class Drawable extends Moveable
     strokeWeight(2.0/radius);
   }
 
-  void render()
+  void renderSelf()
   {
-    prerender();
-    drawAxes();
-
     if (null != vertices)
       for (var i=0; i < vertices.length; i += 4)
       {
@@ -187,6 +185,15 @@ class Drawable extends Moveable
           vertices[i+2],
           vertices[i+3]);
       }
+  }
+  
+  void render()
+  {
+    prerender();
+    drawAxes();
+    
+    renderSelf();
+
     for (var entity : children)
     {
       entity.render();

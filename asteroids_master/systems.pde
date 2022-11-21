@@ -1,4 +1,4 @@
-Boolean Debug_EnableAxisDisplay = true;
+Boolean Debug_EnableAxisDisplay = false;
 
 void drawAxes()
 {

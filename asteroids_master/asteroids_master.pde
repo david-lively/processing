@@ -4,6 +4,10 @@ ArrayList<Missile> missiles = new ArrayList<Missile>();
 Ship ship;
 Clock clock;
 Grid grid;
+Boolean[] keyState = new Boolean[255*2];
+Boolean turnRight = false;
+Boolean turnLeft = false;
+UserInterface ui;
 
 void setup()
 {
@@ -21,12 +25,27 @@ void setup()
   ship.radius = 30;
   allEntities.add(ship);
 
+
+
   createAsteroids();
+
+  ui = new UserInterface();
+  ui.score = 0;
+  ui.ship = ship;
+  allEntities.add(ui);
+  
 
   for (var entity : allEntities)
   {
     entity.initialize();
   }
+
+  for (var i=0; i < keyState.length; ++i)
+  {
+    keyState[i] = false;
+  }
+  
+
 }
 
 /*
@@ -96,7 +115,7 @@ void draw()
     {
       if (m.livesRemaining <= 0 || m.IsOffScreen())
       {
-        allEntities.remove(m);  
+        allEntities.remove(m);
       } else
         newMissiles.add(m);
     }
@@ -108,97 +127,78 @@ void draw()
   checkCollisions();
 
   pop();
+
 }
-
-void breakAsteroids()
-{
-  var newAsteroids = new ArrayList<Asteroid>();
-
-  for (var i = asteroids.size()-1; i >= 0; --i)
-  {
-    var a = asteroids.get(i);
-    a.explode();
-
-    if (a.livesRemaining <= 0)
-    {
-      allEntities.remove(a);
-      continue;
-    }
-
-    var b = new Asteroid();
-
-    b.initialize();
-    b.radius = a.radius;
-    b.livesRemaining = a.livesRemaining;
-    b.velocity = a.velocity.copy().mult(-1);
-    b.position = a.position.copy();
-
-    //var v = a.velocity;
-    //a.velocity.y = v.x;
-    //a.velocity.x = -1 * v.y;
-    //b.velocity.x = -1 * a.velocity.x;
-    //b.velocity.y = -1 * a.velocity.y;
-    //b.position.x = a.position.x;
-    //b.position.y = a.position.y;
-
-    newAsteroids.add(b);
-    newAsteroids.add(a);
-    allEntities.add(b);
-  }
-
-  asteroids = newAsteroids;
-}
-
-void mouseClicked()
-{
-  breakAsteroids();
-}
-
 
 void keyReleased()
 {
-  if (' ' == key)
-    fireMissile();
-  //println("Hello world");
+  if (CODED == key)
+  {
+    keyState[256 + keyCode] = false;
+  } else
+  {
+    keyState[key] = false;
+    if (key == ' ')
+      fireMissile();
+  }
 }
+
+
+void keyPressed()
+{
+  if (CODED == key)
+  {
+    keyState[256 + keyCode] = true;
+  } else
+  {
+    keyState[key] = true;
+  }
+}
+
+Boolean codedState(int v)
+{
+  return keyState[256 + v];
+}
+
 void handleInput()
 {
+  if (codedState(RIGHT))
+    ship.orientation += 5;
+  if (codedState(LEFT))
+    ship.orientation -= 5;
+  if (codedState(UP))
+    ship.accelerate(4);
+
+  /*
   if (keyPressed)
-  {
-    //switch(key)
-    //{
-    //  //case 'b':
-    //  //  breakAsteroids();
-    //  //  break;
-    //}
-
-    switch(keyCode)
-    {
-    case LEFT:
-      ship.orientation -= 5;
-      break;
-
-    case RIGHT:
-      ship.orientation += 5;
-      break;
-
-    case UP:
-      ship.accelerate(4);
-      break;
-    }
-  }
+   {
+   switch(keyCode)
+   {
+   case LEFT:
+   ship.orientation -= 5;
+   break;
+   
+   case RIGHT:
+   ship.orientation += 5;
+   break;
+   
+   case UP:
+   ship.accelerate(4);
+   break;
+   }
+   }*/
 }
 
 void fireMissile()
 {
   float missileSpeed = 400;
-  println("Fire");
+
   var m = new Missile();
   m.initialize();
   //m.position.x = ship.position.x;
   //m.velocity.y = ship.velocity.y;
   m.orientation = ship.orientation;
-  m.position =  ship.position.copy();
+  m.position = ship.position.copy();
   m.velocity = PVector.fromAngle(radians(ship.orientation)).mult(missileSpeed);
   //m.velocity.y = sin(radians(m.orientation)) * 100;
 
@@ -213,21 +213,23 @@ void checkCollisions()
   for (var i=asteroids.size()-1; i >= 0; --i)
   {
     var a = asteroids.get(i);
+    
     for (var j=missiles.size()-1; j >= 0; --j)
     {
       var m = missiles.get(j);
-      
+
       if (collidesWith(a, m))
       {
         --m.livesRemaining;
         a.explode();
+        ++ui.score;
         if (a.livesRemaining > 0)
         {
-          var speed = a.velocity.mag();
-         
+          var speed = a.velocity.mag() * 3;
+
           a.velocity = PVector.fromAngle(radians(m.orientation + 90)).mult(speed);
 
-          var b = new Asteroid();          
+          var b = new Asteroid();
           b.initialize();
           b.radius = a.radius;
           b.livesRemaining = a.livesRemaining;
