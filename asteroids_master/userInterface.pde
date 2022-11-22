@@ -19,7 +19,8 @@ class UserInterface extends Drawable
     stroke(255);
     textSize(32);
     fill(255);  
-    var s = "Score: " + score + "    Lives: " + ship.livesRemaining + " Asteroids: " + asteroids.size();
+    var s = "Score: " + score + " Lives: " + ship.livesRemaining + " Asteroids: " + asteroids.size();
+    s += "\nSpeed : " + ship.velocity.mag();
     text(s, 0, 0);
     pop();
   }

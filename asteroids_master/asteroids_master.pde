@@ -101,7 +101,7 @@ void draw()
   for (var i=missiles.size()-1; i >= 0; --i)
   {
     var m = missiles.get(i);
-    if (m.livesRemaining <= 0 || m.IsOffScreen())
+      if (m.livesRemaining <= 0 || m.IsOffScreen())
     {
       allEntities.remove(m);
       missiles.remove(m);

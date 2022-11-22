@@ -70,6 +70,7 @@ class Moveable extends Entity
   int livesRemaining=1;
   Boolean wrapToScreen = true;
   float radius;
+  float drag;
   
   float spin;
 
@@ -101,27 +102,32 @@ class Moveable extends Entity
   void update()
   {
     super.update();
+    
     var dt = clock.dtSecs();
     var move = velocity.copy().mult(dt);
-    //moveBy = moveBy * velocity * clock.dt;
+    
+    velocity = velocity.mult(1-(drag * dt));
+
     position.add(move);
     orientation += spin * dt;
 
+    var wrapXValue = width + 2*radius;
+    var wrapYValue = height + 2*radius;
     if (wrapToScreen)
     {
-      if (position.x < -width/2)
+      if (position.x+radius < -width/2)
       {
-        position.x += width;
-      } else if (position.x >= width/2)
+        position.x += wrapXValue;
+      } else if (position.x-radius >= width/2)
       {
-        position.x -= width;
+        position.x -= wrapXValue;
       }
-      if (position.y < -height/2)
+      if (position.y+radius < -height/2)
       {
-        position.y += height;
-      } else if (position.y >= height/2)
+        position.y += wrapYValue;
+      } else if (position.y-radius >= height/2)
       {
-        position.y -= height;
+        position.y -= wrapYValue;
       }
     }
   }
@@ -224,6 +230,7 @@ class Ship extends Drawable
     name = "Ship";
     radius = 10;
     livesRemaining = 1;
+    drag = 0.5;
   }
 
   void initialize()
