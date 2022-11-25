@@ -40,7 +40,8 @@ class Entity
 class Clock extends Entity
 {
   private float _prevTime;
-  float dt;
+
+  public float dt; // milliseconds
 
   Clock()
   {
@@ -71,7 +72,7 @@ class Moveable extends Entity
   Boolean wrapToScreen = true;
   float radius;
   float drag;
-  
+
   float spin;
 
   Moveable()
@@ -102,10 +103,10 @@ class Moveable extends Entity
   void update()
   {
     super.update();
-    
+
     var dt = clock.dtSecs();
     var move = velocity.copy().mult(dt);
-    
+
     velocity = velocity.mult(1-(drag * dt));
 
     position.add(move);
@@ -192,12 +193,12 @@ class Drawable extends Moveable
           vertices[i+3]);
       }
   }
-  
+
   void render()
   {
     prerender();
     drawAxes();
-    
+
     renderSelf();
 
     for (var entity : children)
@@ -230,7 +231,7 @@ class Ship extends Drawable
     name = "Ship";
     radius = 10;
     livesRemaining = 1;
-    drag = 0.5;
+    drag = 0.3;
   }
 
   void initialize()
@@ -291,8 +292,9 @@ class Thruster extends Drawable
       push();
       translate(position.x, position.y);
       rotate(orientation);
+      scale(lifetime+1,1);
       noFill();
-      triangle(0.5, 0.3, 0.5, -0.3, -0.5, 0);
+      triangle(0.0, 0.3, 0.0, -0.3, -0.7, 0);
       pop();
     }
   }
@@ -330,7 +332,6 @@ class Grid extends Drawable
     rotate(orientation);
 
     stroke(32);
-
     for (var i=-radius; i <= radius; i += 32)
     {
       line(-radius, i, radius, i);
