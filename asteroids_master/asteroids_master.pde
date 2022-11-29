@@ -25,7 +25,7 @@ void setup()
   ship.radius = 30;
   allEntities.add(ship);
 
-  createAsteroids();
+  createAsteroids(4);
 
   ui = new UserInterface();
   ui.score = 0;
@@ -45,9 +45,8 @@ void setup()
 
 /*
 */
-void createAsteroids()
+void createAsteroids(int numAsteroids)
 {
-  int numAsteroids = 6;
 
   var spread = 300;
   for (var i=0; i < numAsteroids; ++i)
@@ -76,7 +75,10 @@ void draw()
   background(0);
   // move the origin to the center of the screen
   translate(width/2, height/2);
+  rotate(radians(globalRotation));
   grid.render();
+
+  checkCollisions();
 
   for (var entity : allEntities)
   {
@@ -101,17 +103,18 @@ void draw()
   for (var i=missiles.size()-1; i >= 0; --i)
   {
     var m = missiles.get(i);
-      if (m.livesRemaining <= 0 || m.IsOffScreen())
+    if (m.livesRemaining <= 0 || m.IsOffScreen())
     {
       allEntities.remove(m);
       missiles.remove(m);
     }
   }
 
-  checkCollisions();
 
   pop();
 }
+
+float globalRotation = 0;
 
 void keyReleased()
 {
@@ -121,8 +124,12 @@ void keyReleased()
   } else
   {
     keyState[key] = false;
-    if (key == ' ')
+    switch(key)
+    {
+    case ' ':
       fireMissile();
+      break;
+    }
   }
 }
 
@@ -151,6 +158,10 @@ void handleInput()
     ship.orientation -= 5;
   if (codedState(UP))
     ship.accelerate(4);
+  if (keyState['w'])
+    globalRotation += 2;
+  if (keyState['s'])
+    globalRotation -= 2;
 }
 
 void fireMissile()

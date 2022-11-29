@@ -184,7 +184,10 @@ class Drawable extends Moveable
 
   void renderSelf()
   {
+    push();
+
     if (null != vertices)
+
       for (var i=0; i < vertices.length; i += 4)
       {
         line(vertices[i],
@@ -192,6 +195,11 @@ class Drawable extends Moveable
           vertices[i+2],
           vertices[i+3]);
       }
+    stroke(0, 255, 0);
+    noFill();
+    /// draw bounding circle
+    //circle(0, 0, 2);
+    pop();
   }
 
   void render()
@@ -292,7 +300,7 @@ class Thruster extends Drawable
       push();
       translate(position.x, position.y);
       rotate(orientation);
-      scale(lifetime+1,1);
+      scale(lifetime+1, 1);
       noFill();
       triangle(0.0, 0.3, 0.0, -0.3, -0.7, 0);
       pop();
@@ -373,17 +381,21 @@ class Asteroid extends Drawable
     spin=45;
     livesRemaining = 3;
     var numVerts = 20;
-    var r = 1;
+    var r = 1;//random(1024);
 
     var points = new float[numVerts * 2 + 2];
 
+
     {
+      var noiseSeed = random(1024);
+      var noiseSpread = 1000;
       for (var i=0; i < numVerts; ++i)
       {
         var theta = i * 2.0 *PI / numVerts;
 
         /// offset each vertex by a random amount
-        var noiseR = r + (random(20)-10)/40.0;
+        //var noiseR = r + (random(20)-10)/40.0;
+        var noiseR = r + 0.5*(noise(noiseSpread * (noiseSeed + theta))-0.5f);///2;
         //var noiseR = 1;;
         var x = cos(theta) * noiseR;
         var y = sin(theta) * noiseR;
